@@ -1,0 +1,12 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+
+<div>
+    <navbar class="d-flex align-items-center justify-content-between">
+        <span> Welcome {{ user.username }} </span>
+        <a class="text-black" href="{% url "logout" %}"> Logout <a>
+    </navbar>
+</div>
+
+{% endblock content %}

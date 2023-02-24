@@ -1,0 +1,71 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="d-flex justify-content-between">
+  <div class="p-5 pb-0">
+    <span class="auth-logo">Manucho</span>
+    <div
+      class="auth d-flex flex-column align-items-center justify-content-center gap-3"
+    >
+      <span class="auth-welcome mb-1"
+        >Welcome back.</span
+      >
+      {% for message in messages %} {% if message.tags == "error" %}
+      <span class="bg-danger p-2 rounded text-center auth-message">
+        {{ message }}
+      </span>
+      {% else %}
+      <span class="bg-{{ messages.tags }} p-2 rounded text-center auth-message">
+        {{ message }}
+      </span>
+      {% endif %} {% endfor %}
+
+      <form method="POST" class="d-flex flex-column gap-2">
+        {% csrf_token %}
+        <div class="d-flex flex-column gap-2">
+          <label class="auth-label" for="username">Username</label>
+          <input required class="auth-input" type="text" name="username" />
+        </div>
+        <div class="d-flex flex-column gap-2">
+          <label class="auth-label" for="email">Email</label>
+          <input required class="auth-input" type="email" name="email" />
+        </div>
+        <div class="d-flex flex-column gap-2">
+          <label class="auth-label" for="password">Password</label>
+          <input required class="auth-input" type="password" name="password" />
+        </div>
+        <div class="d-flex flex-column gap-2">
+          <label class="auth-label" for="confirm_password"
+            >Confirm Password</label
+          >
+          <input
+            required
+            class="auth-input"
+            type="password"
+            name="confirm_password"
+          />
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>
+            <input type="checkbox" name="remember_me" />
+            Remember me
+          </span>
+          <a class="text-black" href="#">Forgot Password</a>
+        </div>
+        <button
+          class="auth-btn btn border rounded btn-dark text-center"
+          type="submit"
+        >
+          Sign Up
+        </button>
+      </form>
+      <span class="text-dark mt-5">
+        Already have an account ? 
+        <a class="text-dark" href="{% url "login" %}">Sign In</a>
+      </span>
+    </div>
+  </div>
+  <div class="auth-image">
+    <img src="{% static 'images/login.jpg' %}" />
+  </div>
+</div>
+
+{% endblock content %}
