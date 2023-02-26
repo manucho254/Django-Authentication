@@ -9,12 +9,16 @@
         >Welcome back.</span
       >
       {% for message in messages %} {% if message.tags == "error" %}
-      <span class="bg-danger text-light p-2 rounded text-center auth-message">
-        {{ message }}
+      <span class="alert alert-danger rounded text-center">
+        <i class="fa fa-exclamation-triangle"></i>
+          {{ message }}
+        <button type="button" class="btn border-0" data-bs-dismiss="alert" aria-label="Close">x</button>
       </span>
       {% else %}
-      <span class="bg-success text-light p-2 rounded text-center auth-message">
-        {{ message }}
+      <span class="alert alert-success rounded text-center">
+        <i class="fa fa-regular fa-circle-check"></i>
+          {{ message }}
+        <button type="button" class="btn border-0" data-bs-dismiss="alert" aria-label="Close">x</button>
       </span>
       {% endif %} {% endfor %}
 
