@@ -77,7 +77,7 @@ class RegisterView(View):
                 messages.error(
                     request, "Account with details provided exists, please try again."
                 )
-                return redirect("register")
+                redirect("register")
 
             user: User = User.objects.create_user(username, email, password)
             messages.success(request, "User registration successful.")
@@ -98,9 +98,10 @@ class DashboardView(LoginRequiredMixin, View):
 
 def login_view(request: request.HttpRequest, *args, **kwargs) -> response.HttpResponse:
 
+    form = LoginForm()
+    context = {"form": form}
+
     if request.method != "POST":
-        form = LoginForm()
-        context = {"form": form}
         return render(request, "login.html", context)
 
     form = LoginForm(request.POST)
@@ -125,9 +126,10 @@ def login_view(request: request.HttpRequest, *args, **kwargs) -> response.HttpRe
 
 def register_view(request: request.HttpRequest, *args, **kwargs):
 
+    form = RegisterForm()
+    context = {"form": form}
+    
     if request.method != "POST":
-        form = RegisterForm()
-        context = {"form": form}
         return render(request, "register.html", context)
 
     form = RegisterForm(request.POST)
@@ -163,7 +165,7 @@ def register_view(request: request.HttpRequest, *args, **kwargs):
         user: User = User.objects.create_user(username, email, password)
         messages.success(request, "User registration successful.")
         return redirect("login")
-    
+
     else:
         messages.error(request, "Invalid data provided, please try again.")
         return redirect("register")
