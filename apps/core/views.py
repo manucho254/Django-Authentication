@@ -22,17 +22,10 @@ class LoginView(View):
             username: str = form.cleaned_data.get("username")
             password: str = form.cleaned_data.get("password")
 
-            if not username or not password:
-                messages.error(
-                    request,
-                    "Username, password needed, please try again.",
-                )
-                return redirect("login")
-
             auth_user = authenticate(username=username, password=password)
 
             if not auth_user:
-                messages.error(request, "User not found, please try again.")
+                messages.error(request, "Invalid credentials, please try again.")
                 return redirect("login")
 
             messages.success(request, "Logged in successfully.")
@@ -85,11 +78,11 @@ class RegisterView(View):
                     request, "Account with details provided exists, please try again."
                 )
                 return redirect("register")
-            else:
-                user: User = User.objects.create_user(username, email, password)
 
-                messages.success(request, "User registration successful.")
-                return redirect("login")
+            user: User = User.objects.create_user(username, email, password)
+            messages.success(request, "User registration successful.")
+            return redirect("login")
+
         else:
             messages.error(request, "Invalid data provided, please try again.")
             return redirect("register")
@@ -116,22 +109,15 @@ def login_view(request: request.HttpRequest, *args, **kwargs) -> response.HttpRe
         username: str = form.cleaned_data.get("username")
         password: str = form.cleaned_data.get("password")
 
-        if not username or not password:
-            messages.error(
-                request,
-                "Username, password needed, please try again.",
-            )
-            return redirect("login")
-
         auth_user = authenticate(username=username, password=password)
 
         if not auth_user:
-            messages.error(request, "User not found, please try again.")
+            messages.error(request, "Invalid credentials, please try again.")
             return redirect("login")
-        else:
-            messages.success(request, "Logged in successfully.")
-            login(request, auth_user)
-            return redirect("dashboard")
+
+        messages.success(request, "Logged in successfully.")
+        login(request, auth_user)
+        return redirect("dashboard")
     else:
         messages.error(request, "Invalid data provided, please try again.")
         return redirect("login")
@@ -175,9 +161,9 @@ def register_view(request: request.HttpRequest, *args, **kwargs):
             return redirect("register")
 
         user: User = User.objects.create_user(username, email, password)
-
         messages.success(request, "User registration successful.")
         return redirect("login")
+    
     else:
         messages.error(request, "Invalid data provided, please try again.")
         return redirect("register")
