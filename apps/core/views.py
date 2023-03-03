@@ -21,7 +21,6 @@ class LoginView(View):
         if form.is_valid():
             username: str = form.cleaned_data.get("username")
             password: str = form.cleaned_data.get("password")
-            
 
             if not username or not password:
                 messages.error(
@@ -35,10 +34,10 @@ class LoginView(View):
             if not auth_user:
                 messages.error(request, "User not found, please try again.")
                 return redirect("login")
-            else:
-                messages.success(request, "Logged in successfully.")
-                login(request, auth_user)
-                return redirect("dashboard")
+
+            messages.success(request, "Logged in successfully.")
+            login(request, auth_user)
+            return redirect("dashboard")
         else:
             messages.error(request, "Invalid data provided, please try again.")
             return redirect("login")
@@ -65,10 +64,17 @@ class RegisterView(View):
             password: str = form.cleaned_data.get("password")
             confirm_password: str = form.cleaned_data.get("confirm_password")
 
-            if not username or not password or not confirm_password:
+            if len(password) < 8 or len(confirm_password) < 8:
                 messages.error(
                     request,
-                    "Username, password and confirm_password needed, please try again.",
+                    "Password should contain 8 or more characters.",
+                )
+                return redirect("register")
+
+            if password != confirm_password:
+                messages.error(
+                    request,
+                    "Password and confirm_password don't match.",
                 )
                 return redirect("register")
 
@@ -81,8 +87,6 @@ class RegisterView(View):
                 return redirect("register")
             else:
                 user: User = User.objects.create_user(username, email, password)
-                user.set_password(password)
-                user.save()
 
                 messages.success(request, "User registration successful.")
                 return redirect("login")
@@ -101,77 +105,82 @@ class DashboardView(LoginRequiredMixin, View):
 
 def login_view(request: request.HttpRequest, *args, **kwargs) -> response.HttpResponse:
 
-    if request.method == "POST":
-        form = LoginForm(request.POST)
+    if request.method != "POST":
+        form = LoginForm()
+        context = {"form": form}
+        return render(request, "login.html", context)
 
-        if form.is_valid():
-            username: str = form.cleaned_data.get("username")
-            password: str = form.cleaned_data.get("password")
+    form = LoginForm(request.POST)
 
-            if not username or not password:
-                messages.error(
-                    request,
-                    "Username, password needed, please try again.",
-                )
-                return redirect("login")
+    if form.is_valid():
+        username: str = form.cleaned_data.get("username")
+        password: str = form.cleaned_data.get("password")
 
-            auth_user = authenticate(username=username, password=password)
-
-            if not auth_user:
-                messages.error(request, "User not found, please try again.")
-                return redirect("login")
-            else:
-                messages.success(request, "Logged in successfully.")
-                login(request, auth_user)
-                return redirect("dashboard")
-        else:
-            messages.error(request, "Invalid data provided, please try again.")
+        if not username or not password:
+            messages.error(
+                request,
+                "Username, password needed, please try again.",
+            )
             return redirect("login")
 
-    if request.method == "GET":
-        form = LoginForm()
-        return render(request, "login.html", {form: form})
+        auth_user = authenticate(username=username, password=password)
+
+        if not auth_user:
+            messages.error(request, "User not found, please try again.")
+            return redirect("login")
+        else:
+            messages.success(request, "Logged in successfully.")
+            login(request, auth_user)
+            return redirect("dashboard")
+    else:
+        messages.error(request, "Invalid data provided, please try again.")
+        return redirect("login")
 
 
 def register_view(request: request.HttpRequest, *args, **kwargs):
 
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
+    if request.method != "POST":
+        form = RegisterForm()
+        context = {"form": form}
+        return render(request, "register.html", context)
 
-        if form.is_valid():
-            username: str = form.cleaned_data.get("username")
-            email: str = form.cleaned_data.get("email")
-            password: str = form.cleaned_data.get("password")
-            confirm_password: str = form.cleaned_data.get("confirm_password")
+    form = RegisterForm(request.POST)
 
-            if not username or not password or not confirm_password:
-                messages.error(
-                    request,
-                    "Username, password and confirm_password needed, please try again.",
-                )
-                return redirect("register")
+    if form.is_valid():
+        username: str = form.cleaned_data.get("username")
+        email: str = form.cleaned_data.get("email")
+        password: str = form.cleaned_data.get("password")
+        confirm_password: str = form.cleaned_data.get("confirm_password")
 
-            user: User = User.objects.filter(username=username).first()
-
-            if user:
-                messages.error(
-                    request, "Account with details provided exists, please try again."
-                )
-                return redirect("register")
-            else:
-                user: User = User.objects.create_user(username, email, password)
-                user.set_password(password)
-                user.save()
-
-                messages.success(request, "User registration successful.")
-                return redirect("login")
-        else:
-            messages.error(request, "Invalid data provided, please try again.")
+        if len(password) < 8 or len(confirm_password) < 8:
+            messages.error(
+                request,
+                "Password should contain 8 or more characters.",
+            )
             return redirect("register")
 
-    if request.method == "GET":
-        form = RegisterForm()
-        return render(request, "register.html", {form: form})
+        if password != confirm_password:
+            messages.error(
+                request,
+                "Password and confirm_password don't match.",
+            )
+            return redirect("register")
+
+        user: User = User.objects.filter(username=username).first()
+
+        if user:
+            messages.error(
+                request, "Account with details provided exists, please try again."
+            )
+            return redirect("register")
+
+        user: User = User.objects.create_user(username, email, password)
+
+        messages.success(request, "User registration successful.")
+        return redirect("login")
+    else:
+        messages.error(request, "Invalid data provided, please try again.")
+        return redirect("register")
 
 
 def logout_view(request: request.HttpRequest, *args, **kwargs):
@@ -180,7 +189,7 @@ def logout_view(request: request.HttpRequest, *args, **kwargs):
     return redirect("login")
 
 
-@login_required(redirect_field_name=None)
+@login_required
 def dashboard_view(request: request.HttpRequest, *args, **kwargs):
     user: User = request.user
 

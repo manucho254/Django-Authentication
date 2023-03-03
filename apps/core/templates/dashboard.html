@@ -3,51 +3,34 @@
 {% block content %}
 
 <div>
-    <nav class="bg-light p-4">
+    <nav class="bg-light p-3">
         <span class="d-flex align-items-center"> Welcome {{ user.username }} </span>
         <span class="d-flex justify-content-end p-0">
             <a class="text-black" href="{% url "logout" %}"> Logout <a>
         </span>
     </nav>
-
-    <span class="auth-welcome">Welcome back.</span>
-    {% for message in messages %} {% if message.tags == "error" %}
-    <span class="alert alert-danger rounded text-center">
-      <i class="fa fa-exclamation-triangle"></i>
-        {{ message }}
-      <button type="button" class="btn border-0" data-bs-dismiss="alert" aria-label="Close">x</button>
-    </span>
-    {% else %}
-    <span class="alert alert-success rounded text-center">
-      <i class="fa fa-regular fa-circle-check"></i>
-        {{ message }}
-      <button type="button" class="btn border-0" data-bs-dismiss="alert" aria-label="Close">x</button>
-    </span>
-    {% endif %} {% endfor %}
-
-    {% comment %} {% for message in messages %} {% if message.tags == "error" %}
-    <div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
-        <div class="toast-header">
-          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="toast-body">
+    <div class="row">
+      <div class="sidebar col-md-3">
+        <a class="text-decoration-none h5" href="{% url "dashboard" %}">Dashboard</a>
+      </div>
+      <main class="col-md-3">
+        <span class="auth-welcome">Welcome back.</span>
+        {% for message in messages %} {% if message.tags == "error" %}
+        <span class="alert auth-message alert-danger rounded text-center">
+          <span><i class="fa fa-exclamation-triangle"></i></span>
+            <span>{{ message }}</span>
+          <button type="button" data-bs-dismiss="alert" aria-label="Close">x</button>
+        </span>
+        {% else %}
+        <span class="alert auth-message alert-success rounded text-center">
+          <i class="fa fa-regular fa-circle-check"></i>
             {{ message }}
-        </div>
-     </div>
-    {% else %}
-      <div class="toast bg-success" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
-        <div class="toast-header">
-          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="toast-body">
-            {{ message }}
-        </div>
-     </div>
-    {% endif %} {% endfor %} {% endcomment %}
+          <button type="button" data-bs-dismiss="alert" aria-label="Close">x</button>
+        </span>
+        {% endif %} {% endfor %}
+      </main>
+    </div>
+    
 </div>
 
 {% endblock content %}
