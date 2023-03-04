@@ -1,26 +1,27 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
-<div class="d-flex justify-content-between">
-  <div class="p-5 pb-0 overflow-y">
-    <span class="auth-logo">Manucho</span>
+<div class="row">
+  <div class="col-md-5 p-5 pb-0 d-flex flex-column gap-5">
+    <div class="auth-logo">
+      <i class="fa-solid fa-globe"></i>
+      Manucho
+    </div>
     <div
-      class="auth d-flex flex-column align-items-center justify-content-center gap-5"
+      class="d-flex flex-column justify-content-center gap-5 p-4"
     >
       <span class="auth-welcome">Welcome back.</span>
       {% for message in messages %} {% if message.tags == "error" %}
       <span class="alert auth-message alert-danger rounded text-center">
         <span><i class="fa fa-exclamation-triangle"></i></span>
         <span>{{ message }}</span>
-        <button type="button" data-bs-dismiss="alert" aria-label="Close">x</button>
       </span>
       {% else %}
       <span class="alert auth-message alert-success rounded text-center">
-        <i class="fa fa-regular fa-circle-check"></i>
-          {{ message }}
-        <button type="button" data-bs-dismiss="alert" aria-label="Close">x</button>
+        <span><i class="fa fa-regular fa-circle-check"></i></span>
+        <span> {{ message}} </span>
       </span>
       {% endif %} {% endfor %}
 
-      <form method="POST" class="d-flex flex-column gap-3">
+      <form method="POST" class="d-flex justity-content-center flex-column gap-3">
         {% csrf_token %}
         {{ form }}
         <div class="d-flex justify-content-between">
@@ -30,12 +31,12 @@
           </span>
           <a class="text-black" href="#">Forgot Password</a>
         </div>
-        <button
-          class="auth-btn btn border rounded btn-dark text-center"
-          type="submit"
-        >
-          Sign In
-        </button>
+          <button
+            class="auth-btn btn border rounded btn-dark text-center"
+            type="submit"
+          >
+            Sign In
+          </button>
       </form>
       {% comment %} <button class="auth-btn btn border rounded btn-light text-center w-100">
         Sign In with Google
@@ -46,7 +47,7 @@
      </span>
     </div>
   </div>
-  <div class="auth-image">
+  <div class="auth-image col-md-7">
     <img src="{% static 'images/login.jpg' %}" />
   </div>
 </div>

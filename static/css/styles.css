@@ -1,11 +1,13 @@
 * {
   box-sizing: border-box;
   margin: 0;
+  padding: 0;
 }
 
 body {
   font-size: 15px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
 }
 
 .auth {
@@ -19,7 +21,7 @@ body {
 
 .auth-image {
   padding: 0;
-  width: 900px;
+  width: fill;
 }
 
 .auth-image img {
@@ -28,9 +30,9 @@ body {
 }
 
 .auth-input {
-  width: 400px;
+  width: auto;
   height: 10px;
-  padding: 22px;
+  padding: 20px;
 }
 
 label {
@@ -39,6 +41,7 @@ label {
 }
 
 .auth-btn {
+  width: auto;
   font-size: 15px;
   padding: 12px;
   font-weight: bold;
@@ -75,22 +78,25 @@ label {
 .alert {
   position: absolute;
   top: 4rem;
+  right: 3rem;
 }
 
 .sidebar {
   width: 250px;
-  height: 630px;
+  height: 100vh;
   background-color: rgb(242, 242, 242);
   color: rgb(25, 25, 25);
   padding: 30px;
 }
 
-@media only screen and (max-width: 600px) {
-  .auth {
-    width: 400px;
-    padding-top: 40px;
-  }
+.navbar {
+  width: fill !important;
+  padding: 20px;
+  background-color: rgb(242, 242, 242);
+}
 
+
+@media only screen and (max-width: 600px) {
   .auth-logo {
     font-size: 20px;
     font-weight: bold;
@@ -105,7 +111,7 @@ label {
   }
 
   .auth-input {
-    width: auto;
+    width: 100%;
     height: 10px;
     padding: 25px;
   }

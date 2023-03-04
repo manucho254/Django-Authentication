@@ -3,34 +3,32 @@
 {% block content %}
 
 <div>
-    <nav class="bg-light p-3">
-        <span class="d-flex align-items-center"> Welcome {{ user.username }} </span>
-        <span class="d-flex justify-content-end p-0">
-            <a class="text-black" href="{% url "logout" %}"> Logout <a>
-        </span>
-    </nav>
-    <div class="row">
-      <div class="sidebar col-md-3">
+  {% for message in messages %} {% if message.tags == "error" %}
+  <span class="alert auth-message alert-danger rounded text-center">
+    <span><i class="fa fa-exclamation-triangle"></i></span>
+    <span>{{ message }}</span>
+  </span>
+  {% else %}
+  <span class="alert auth-message alert-success rounded text-center">
+    <span><i class="fa fa-regular fa-circle-check"></i></span>
+    <span>{{ message }}</span>
+  </span>
+  {% endif %} {% endfor %}
+    <div class="d-flex">
+      <div class="sidebar">
         <a class="text-decoration-none h5" href="{% url "dashboard" %}">Dashboard</a>
       </div>
-      <main class="col-md-3">
-        <span class="auth-welcome">Welcome back.</span>
-        {% for message in messages %} {% if message.tags == "error" %}
-        <span class="alert auth-message alert-danger rounded text-center">
-          <span><i class="fa fa-exclamation-triangle"></i></span>
-            <span>{{ message }}</span>
-          <button type="button" data-bs-dismiss="alert" aria-label="Close">x</button>
-        </span>
-        {% else %}
-        <span class="alert auth-message alert-success rounded text-center">
-          <i class="fa fa-regular fa-circle-check"></i>
-            {{ message }}
-          <button type="button" data-bs-dismiss="alert" aria-label="Close">x</button>
-        </span>
-        {% endif %} {% endfor %}
+      <main class="w-100">
+        <nav class="navbar navbar-light">
+            <div>
+              <a class="text-black" href="{% url "logout" %}"> Logout <a>
+            </div>
+        </nav>
+        <div class="p-5"> 
+          <span class="d-flex h5"> Welcome {{ user.username }}</span> 
+        </div>
       </main>
     </div>
-    
 </div>
 
 {% endblock content %}
