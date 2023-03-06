@@ -51,6 +51,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+AUTH_USER_MODEL = 'core.User'
+
 ROOT_URLCONF = "django_auth.urls"
 
 TEMPLATES = [
@@ -69,6 +71,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = "django_auth.wsgi.application"
 
 
@@ -81,7 +84,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -120,6 +122,12 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [ BASE_DIR / "static"]
 LOGIN_URL = "/login/"
+
+BACKEND_URL = env("BACKEND_URL")
+
+# Email config
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

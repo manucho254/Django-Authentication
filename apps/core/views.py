@@ -1,116 +1,38 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.http import request, response
+from django.http.request import HttpRequest
+from django.http.response import HttpResponse
 from django.shortcuts import redirect
-from django.views.generic import View
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from .forms import RegisterForm, LoginForm
+
+from apps.core.models import User
+from apps.core.forms import (
+    RegisterForm,
+    LoginForm,
+    ChangePasswordForm,
+    ResetPasswordForm,
+)
+from apps.utils.email_operations import confirm_account, reset_password
+from apps.utils.tokens import generate_token, validate_token
+
+from datetime import timedelta
 
 
-class LoginView(View):
-    def get(self, request: request.HttpRequest, *args, **kwargs):
-        form = LoginForm()
-        return render(request, "login.html", {form: form})
-
-    def post(self, request: request.HttpRequest, *args, **kwargs):
-        form = LoginForm(request.POST)
-
-        if form.is_valid():
-            username: str = form.cleaned_data.get("username")
-            password: str = form.cleaned_data.get("password")
-
-            auth_user = authenticate(username=username, password=password)
-
-            if not auth_user:
-                messages.error(request, "Invalid credentials, please try again.")
-                return redirect("login")
-
-            messages.success(request, "Logged in successfully.")
-            login(request, auth_user)
-            return redirect("dashboard")
-        else:
-            messages.error(request, "Invalid data provided, please try again.")
-            return redirect("login")
-
-
-class LogoutView(View):
-    def get(self, request: request.HttpRequest, *args, **kwargs):
-        logout(request)
-        redirect("login")
-
-
-class RegisterView(View):
-    def get(self, request: request.HttpRequest, *args, **kwargs):
-        form = RegisterForm()
-        return render(request, "register.html", {form: form})
-
-    def post(self, request: request.HttpRequest, *args, **kwargs):
-
-        form = RegisterForm(request.POST)
-
-        if form.is_valid():
-            username: str = form.cleaned_data.get("username")
-            email: str = form.cleaned_data.get("email")
-            password: str = form.cleaned_data.get("password")
-            confirm_password: str = form.cleaned_data.get("confirm_password")
-
-            if len(password) < 8 or len(confirm_password) < 8:
-                messages.error(
-                    request,
-                    "Password should contain 8 or more characters.",
-                )
-                return redirect("register")
-
-            if password != confirm_password:
-                messages.error(
-                    request,
-                    "Password and confirm_password don't match.",
-                )
-                return redirect("register")
-
-            user: User = User.objects.filter(username=username).first()
-
-            if user:
-                messages.error(
-                    request, "Account with details provided exists, please try again."
-                )
-                redirect("register")
-
-            user: User = User.objects.create_user(username, email, password)
-            messages.success(request, "User registration successful.")
-            return redirect("login")
-
-        else:
-            messages.error(request, "Invalid data provided, please try again.")
-            return redirect("register")
-
-
-class DashboardView(LoginRequiredMixin, View):
-    redirect_field_name = None
-
-    def get(self, request: request.HttpRequest, *args, **kwargs):
-        context = {"user": request.user}
-        return render(request, "dashboard.html", context)
-
-
-def login_view(request: request.HttpRequest, *args, **kwargs) -> response.HttpResponse:
+def login_view(request: HttpRequest, *args, **kwargs) -> HttpResponse:
 
     form = LoginForm()
-    context = {"form": form}
 
     if request.method != "POST":
-        return render(request, "login.html", context)
+        return render(request, "login.html", {"form": form})
 
     form = LoginForm(request.POST)
 
     if form.is_valid():
-        username: str = form.cleaned_data.get("username")
+        email: str = form.cleaned_data.get("email")
         password: str = form.cleaned_data.get("password")
 
-        auth_user = authenticate(username=username, password=password)
+        auth_user = authenticate(email=email, password=password)
 
         if not auth_user:
             messages.error(request, "Invalid credentials, please try again.")
@@ -124,13 +46,12 @@ def login_view(request: request.HttpRequest, *args, **kwargs) -> response.HttpRe
         return redirect("login")
 
 
-def register_view(request: request.HttpRequest, *args, **kwargs):
+def register_view(request: HttpRequest, *args, **kwargs):
 
     form = RegisterForm()
-    context = {"form": form}
-    
+
     if request.method != "POST":
-        return render(request, "register.html", context)
+        return render(request, "register.html", {"form": form})
 
     form = RegisterForm(request.POST)
 
@@ -162,7 +83,12 @@ def register_view(request: request.HttpRequest, *args, **kwargs):
             )
             return redirect("register")
 
-        user: User = User.objects.create_user(username, email, password)
+        user: User = User.objects.create_user(email, password=password)
+        user.username = username
+        user.save()
+        token = generate_token({"user_id": user.user_id}, timedelta(hours=3))
+        data = {"username": username, "email": email, "token": token}
+        confirm_account(data)
         messages.success(request, "User registration successful.")
         return redirect("login")
 
@@ -171,14 +97,82 @@ def register_view(request: request.HttpRequest, *args, **kwargs):
         return redirect("register")
 
 
-def logout_view(request: request.HttpRequest, *args, **kwargs):
+def logout_view(request: HttpRequest, *args, **kwargs):
     logout(request)
     messages.success(request, "Logged out successfully.")
     return redirect("login")
 
 
+def confirm_account_view(request: HttpRequest, token: str, *args, **kwargs):
+
+    return redirect("login")
+
+
+def reset_password_view(request: HttpRequest, *args, **kwargs):
+
+    form = ResetPasswordForm()
+    if request.method != "POST":
+        return render(request, "reset_password.html", {"form": form})
+
+    form = ResetPasswordForm(request.POST)
+
+    if form.is_valid():
+        email = form.cleaned_data.get("email")
+
+        user: User = User.objects.filter(email=email).first()
+
+        messages.success(
+            request,
+            "An email has will be sent is an account with associated email is found.",
+        )
+        if not user:
+            return redirect("change-password")
+
+        reset_password(user)
+        return redirect("change-password")
+    else:
+        messages.error(request, "Invalid data provided, please try again.")
+        return redirect("change-password")
+
+
+def change_password_view(request: HttpRequest, token: str, *args, **kwargs):
+
+    form = ChangePasswordForm()
+    if request.method != "POST":
+        return render(request, "register.html", {"form": form})
+
+    form = ChangePasswordForm(request.POST)
+
+    if form.is_valid():
+        password = form.cleaned_data.get("password")
+        confirm_password = form.cleaned_data.get("password")
+
+        if password != confirm_password:
+            messages.success(request, "Passwords don't match.")
+            return redirect("change-password")
+
+        decoded_token = validate_token(token)
+
+        if "user_id" not in decoded_token:
+            messages.success(request, "Token invalid or expired.")
+            return redirect("change-password")
+
+        user: User = User.objects.filter(user_id=decoded_token["user_id"]).first()
+        user.set_password(password)
+        user.save()
+
+        messages.success(
+            request,
+            "Password changed successfully.",
+        )
+        return redirect("login")
+    else:
+        messages.error(request, "Invalid data provided, please try again.")
+        return redirect("change-password")
+
+
 @login_required
-def dashboard_view(request: request.HttpRequest, *args, **kwargs):
+def dashboard_view(request: HttpRequest, *args, **kwargs):
     user: User = request.user
 
     context = {"user": user}
