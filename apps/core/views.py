@@ -19,7 +19,7 @@ from apps.utils.tokens import generate_token, validate_token
 from datetime import timedelta
 
 
-def login_view(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+def login_view(request: HttpRequest, *args, **kwargs):
 
     form = LoginForm()
 
