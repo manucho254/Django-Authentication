@@ -86,7 +86,6 @@ def register_view(request: HttpRequest, *args, **kwargs):
         user: User = User.objects.create_user(email, password=password)
         user.username = username
         user.save()
-        print(str(user.user_id))
         token = generate_token({"user_id": str(user.user_id)}, timedelta(days=3))
         data = {"username": username, "email": email, "token": token}
         confirm_account(data)
@@ -105,7 +104,7 @@ def logout_view(request: HttpRequest, *args, **kwargs):
 
 
 def confirm_account_view(request: HttpRequest, token: str, *args, **kwargs):
-    
+
     try:
         decoded_token = validate_token(token)
 
@@ -143,7 +142,9 @@ def reset_password_view(request: HttpRequest, *args, **kwargs):
         if not user:
             return redirect("change-password")
 
-        reset_password(user)
+        token = generate_token({"user_id": str(user.user_id)}, timedelta(hours=3))
+        data = {"username": user.username, "email": email, "token": token}
+        reset_password(data)
         return redirect("change-password")
     else:
         messages.error(request, "Invalid data provided, please try again.")
