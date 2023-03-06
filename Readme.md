@@ -3,5 +3,5 @@
 - Login - ✓
 - Register - ✓
 - Logout - ✓
-- Password reset - ✓
-- Email confirmation - ✓
+- Password reset - ✘
+- Email confirmation - ✘
