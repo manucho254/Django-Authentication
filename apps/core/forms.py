@@ -18,12 +18,12 @@ class RegisterForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=100, label="Username")
+    email = forms.CharField(max_length=100, label="Email Address")
     password = forms.CharField(
-        max_length=30, label="Password", widget=forms.PasswordInput
+        max_length=50, label="Password", widget=forms.PasswordInput
     )
 
-    username.widget.attrs.update({"class": "auth-input"})
+    email.widget.attrs.update({"class": "auth-input"})
     password.widget.attrs.update({"class": "auth-input"})
 
 

@@ -6,16 +6,16 @@ from typing import Any
 
 
 class EmailClient:
-    def __init__(self) -> None:
+    def __init__(self) -> None:  
         self.message = EmailMessage()
         self.html_file = None
 
     def send_email(self, data: dict[Any], html_file: str) -> None:
         self.html_file = html_file
-        self.message.body: str = self._setup_html(data.get("content"))
+        self.message.body: str = self._setup_html(data)
         self.message.subject: str = data.get("subject")
         self.message.to: list = data.get("send_to")
-        self.message.from_email: str = settings.Email
+        # self.message.from_email: str = settings.Email
         self.content_subtype = "html"
         self.message.send()
 

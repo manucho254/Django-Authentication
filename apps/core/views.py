@@ -86,7 +86,8 @@ def register_view(request: HttpRequest, *args, **kwargs):
         user: User = User.objects.create_user(email, password=password)
         user.username = username
         user.save()
-        token = generate_token({"user_id": user.user_id}, timedelta(hours=3))
+        print(str(user.user_id))
+        token = generate_token({"user_id": str(user.user_id)}, timedelta(days=3))
         data = {"username": username, "email": email, "token": token}
         confirm_account(data)
         messages.success(request, "User registration successful.")
@@ -104,8 +105,22 @@ def logout_view(request: HttpRequest, *args, **kwargs):
 
 
 def confirm_account_view(request: HttpRequest, token: str, *args, **kwargs):
+    
+    try:
+        decoded_token = validate_token(token)
 
-    return redirect("login")
+        user: User = User.objects.filter(user_id=decoded_token["user_id"]).first()
+        user.is_confirmed = True
+        user.save()
+
+        messages.success(
+            request,
+            "Account confirmed successfully.",
+        )
+        return redirect("login")
+    except Exception as e:
+        messages.success(request, "Token invalid or expired.")
+        return redirect("login")
 
 
 def reset_password_view(request: HttpRequest, *args, **kwargs):
