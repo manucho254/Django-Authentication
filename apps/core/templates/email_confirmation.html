@@ -893,15 +893,7 @@
                                                   font-size: 20px;
                                                 "
                                               >
-                                                <strong>FORGOT YOUR </strong>
-                                              </h1>
-                                              <h1
-                                                style="
-                                                  color: #333333;
-                                                  font-size: 20px;
-                                                "
-                                              >
-                                                <strong>&nbsp;PASSWORD?</strong>
+                                                <strong> {{ data.subject }} </strong>
                                               </h1>
                                             </td>
                                           </tr>
@@ -921,22 +913,7 @@
                                               align="left"
                                             >
                                               <p style="text-align: center">
-                                                There was a request to change
-                                                your password!
-                                              </p>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td
-                                              class="esd-block-text es-p25t es-p40r es-p40l"
-                                              align="center"
-                                            >
-                                              <p>
-                                                If did not make this request,
-                                                just ignore this email.
-                                                Otherwise, please click the
-                                                button below to change your
-                                                password:
+                                                There is an email to confirm your account.
                                               </p>
                                             </td>
                                           </tr>
@@ -950,7 +927,7 @@
                                                   href="{{ data.url }}"
                                                   class="es-button"
                                                   target="_blank"
-                                                  >RESET PASSWORD</a
+                                                  >CONFIRM EMAIL</a
                                                 ></span
                                               >
                                             </td>

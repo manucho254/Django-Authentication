@@ -15,4 +15,4 @@ def reset_password(data: dict) -> None:
     data["url"] = f"{settings.BACKEND_URL}auth/change-password/{data['token']}/"
     del data["token"]
     data.update({"subject": "Reset Password", "send_to": [data["email"]]})
-    client.send_email(data, "reset_password.html")
+    client.send_email(data, "reset_password_email.html")

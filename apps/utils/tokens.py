@@ -16,5 +16,4 @@ def validate_token(jwt_token: str) -> dict:
     try:
         return jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
     except jwt.ExpiredSignatureError as e:
-        logger.error(e)
         return {"message": "Token expired"}

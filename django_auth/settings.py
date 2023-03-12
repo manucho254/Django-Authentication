@@ -121,7 +121,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [ BASE_DIR / "static"]
-LOGIN_URL = "/login/"
+LOGIN_URL = "/auth/login/"
 
 BACKEND_URL = env("BACKEND_URL")
 

@@ -1,25 +1,24 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <div class="row">
-  <div class="col-md-5 p-5 pb-0 d-flex flex-column gap-5">
-    <div class="auth-logo">
-      <i class="fa-solid fa-globe"></i>
-      Manucho
-    </div>
+  <div class="auth col-md-6 pb-0 p-5 d-flex flex-column gap-5"> 
+    {% include "site_header.html" %}
     <div
-      class="d-flex flex-column justify-content-center gap-5 p-4"
+      class="d-flex flex-column justify-content-center gap-5 p-5"
     >
-      <span class="auth-welcome">Welcome back.</span>
-      {% for message in messages %} {% if message.tags == "error" %}
-      <span class="alert auth-message alert-danger rounded text-center">
-        <span><i class="fa fa-exclamation-triangle"></i></span>
-        <span>{{ message }}</span>
-      </span>
-      {% else %}
-      <span class="alert auth-message alert-success rounded text-center">
-        <span><i class="fa fa-regular fa-circle-check"></i></span>
-        <span> {{ message}} </span>
-      </span>
-      {% endif %} {% endfor %}
+    <span class="auth-welcome">Welcome back.</span>
+    {% for message in messages %} {% if message.tags == "error" %}
+    <span class="alert auth-message alert-danger rounded text-center">
+      <span><i class="fa fa-exclamation-triangle"></i></span>
+      <span>{{ message }}</span>
+    </span>
+    {% else %}
+    <span class="alert auth-message alert-success rounded text-center">
+      <span><i class="fa fa-regular fa-circle-check"></i></span>
+      <span> {{ message}} </span>
+    </span>
+    {% endif %} {% endfor %}
+    
+    <div class="auth-form">
 
       <form method="POST" class="d-flex justity-content-center flex-column gap-3">
         {% csrf_token %}
@@ -38,6 +37,7 @@
             Sign In
           </button>
       </form>
+    </div>
       {% comment %} <button class="auth-btn btn border rounded btn-light text-center w-100">
         Sign In with Google
       </button> {% endcomment %}
@@ -47,7 +47,7 @@
      </span>
     </div>
   </div>
-  <div class="auth-image col-md-7">
+  <div class="auth-image col-md-6">
     <img src="{% static 'images/login.jpg' %}" />
   </div>
 </div>

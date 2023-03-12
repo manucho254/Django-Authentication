@@ -12,6 +12,7 @@ body {
 
 .auth {
   padding: 40px 60px;
+  height: 100vh;
 }
 
 .auth-logo {
@@ -27,6 +28,10 @@ body {
 .auth-image img {
   width: 100%;
   height: 100vh;
+}
+
+.auth-form {
+  width: 400px !important;
 }
 
 .auth-input {
@@ -94,7 +99,6 @@ label {
   padding: 20px;
   background-color: rgb(242, 242, 242);
 }
-
 
 @media only screen and (max-width: 600px) {
   .auth-logo {
